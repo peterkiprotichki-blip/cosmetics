@@ -37,3 +37,5 @@ backend/.env
 .history/
 .DS_Store
 Thumbs.db
+
+.vercel
