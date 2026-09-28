@@ -1,0 +1,98 @@
+<div class="mx-auto max-w-2xl space-y-4">
+  <div class="no-print flex items-center justify-between">
+    <a
+      routerLink="/sales"
+      class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+    >
+      Back to sales
+    </a>
+    <button
+      type="button"
+      class="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
+      (click)="printReceipt()"
+    >
+      Print receipt
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="rounded-xl border border-slate-200 bg-white p-10 text-center text-sm font-medium text-slate-500">
+      Loading...
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (sale(); as receipt) {
+    <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div class="border-b border-dashed border-slate-300 pb-4 text-center">
+        <h1 class="text-xl font-bold tracking-tight text-pink-600">Victory Cosmetics</h1>
+        <p class="text-xs text-slate-500">Cosmetics &amp; Beauty Supplies — Kenya</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 border-b border-dashed border-slate-300 py-4 text-sm">
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500">Sale number</p>
+          <p class="font-semibold text-slate-800">#{{ receipt.saleNumber }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Date</p>
+          <p class="font-semibold text-slate-800">
+            {{ receipt.saleDate | date: 'dd MMM yyyy, HH:mm' }}
+          </p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-wide text-slate-500">Served by</p>
+          <p class="font-semibold text-slate-800">{{ receipt.servedBy?.fullName }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Items</p>
+          <p class="font-semibold text-slate-800">{{ receipt.items.length | number }}</p>
+        </div>
+      </div>
+
+      <table class="w-full text-left text-sm">
+        <thead class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr class="border-b border-slate-200">
+            <th class="py-3">Item</th>
+            <th class="py-3 text-right">Qty</th>
+            <th class="py-3 text-right">Unit price</th>
+            <th class="py-3 text-right">Line total</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @for (line of receipt.items; track $index) {
+            <tr>
+              <td class="py-3 text-slate-800">
+                {{ line.product?.productName }}
+                <span class="block text-xs text-slate-500">{{ line.product?.brand }}</span>
+              </td>
+              <td class="py-3 text-right text-slate-600">{{ line.quantity | number }}</td>
+              <td class="py-3 text-right text-slate-600">Ksh {{ line.unitPrice | number }}</td>
+              <td class="py-3 text-right font-semibold text-slate-800">
+                Ksh {{ line.quantity * line.unitPrice | number }}
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr class="border-t-2 border-slate-300">
+            <td colspan="3" class="py-4 text-right text-sm font-semibold text-slate-700">Total</td>
+            <td class="py-4 text-right text-lg font-bold text-pink-700">
+              Ksh {{ receipt.totalAmount | number }}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="border-t border-dashed border-slate-300 pt-4 text-center text-xs text-slate-500">
+        <p>Thank you for shopping with Victory Cosmetics.</p>
+        <p class="mt-1">Goods once sold are subject to shop policy.</p>
+      </div>
+    </div>
+  }
+</div>

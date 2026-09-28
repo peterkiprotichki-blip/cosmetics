@@ -1,0 +1,159 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-800">Suppliers</h1>
+      <p class="mt-1 text-sm text-slate-500">Manage the suppliers who stock the shop.</p>
+    </div>
+    <button
+      type="button"
+      class="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
+      (click)="openCreate()"
+    >
+      Add supplier
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (showForm()) {
+    <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-slate-800">
+          {{ form._id ? 'Edit supplier' : 'Add supplier' }}
+        </h2>
+        <button
+          type="button"
+          class="rounded-md px-2 py-1 text-sm text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+          (click)="closeForm()"
+        >
+          Cancel
+        </button>
+      </div>
+
+      @if (formError()) {
+        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {{ formError() }}
+        </div>
+      }
+
+      <form (ngSubmit)="save()" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div>
+          <label for="supplierName" class="mb-1 block text-sm font-medium text-slate-700">Supplier name</label>
+          <input
+            id="supplierName"
+            name="supplierName"
+            type="text"
+            [(ngModel)]="form.supplierName"
+            required
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+
+        <div>
+          <label for="phone" class="mb-1 block text-sm font-medium text-slate-700">Phone</label>
+          <input
+            id="phone"
+            name="phone"
+            type="text"
+            [(ngModel)]="form.phone"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+
+        <div>
+          <label for="email" class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            [(ngModel)]="form.email"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+
+        <div>
+          <label for="location" class="mb-1 block text-sm font-medium text-slate-700">Location</label>
+          <input
+            id="location"
+            name="location"
+            type="text"
+            [(ngModel)]="form.location"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+
+        <div class="flex items-end">
+          <button
+            type="submit"
+            [disabled]="saving()"
+            class="w-full rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {{ saving() ? 'Saving...' : form._id ? 'Save changes' : 'Add supplier' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-5 py-3">Supplier</th>
+            <th class="px-5 py-3">Phone</th>
+            <th class="px-5 py-3">Email</th>
+            <th class="px-5 py-3">Location</th>
+            <th class="px-5 py-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @if (loading()) {
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                Loading...
+              </td>
+            </tr>
+          } @else {
+            @for (supplier of suppliers(); track supplier._id) {
+              <tr class="transition hover:bg-slate-50">
+                <td class="px-5 py-3 font-medium text-slate-800">{{ supplier.supplierName }}</td>
+                <td class="px-5 py-3 text-slate-600">{{ supplier.phone || '—' }}</td>
+                <td class="px-5 py-3 text-slate-600">{{ supplier.email || '—' }}</td>
+                <td class="px-5 py-3 text-slate-600">{{ supplier.location || '—' }}</td>
+                <td class="px-5 py-3 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+                      (click)="openEdit(supplier)"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                      (click)="removeSupplier(supplier)"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">
+                  No suppliers found.
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

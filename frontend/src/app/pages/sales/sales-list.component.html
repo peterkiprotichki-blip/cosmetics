@@ -1,0 +1,101 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight text-slate-800">Sales</h1>
+    <p class="mt-1 text-sm text-slate-500">Browse past sales and open receipts.</p>
+  </div>
+
+  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+      <div class="flex-1">
+        <label for="fromDate" class="mb-1 block text-sm font-medium text-slate-700">From</label>
+        <input
+          id="fromDate"
+          name="fromDate"
+          type="date"
+          [(ngModel)]="fromDate"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+        />
+      </div>
+      <div class="flex-1">
+        <label for="toDate" class="mb-1 block text-sm font-medium text-slate-700">To</label>
+        <input
+          id="toDate"
+          name="toDate"
+          type="date"
+          [(ngModel)]="toDate"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+        />
+      </div>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          class="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
+          (click)="load()"
+        >
+          Filter
+        </button>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          (click)="clearFilters()"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-5 py-3">Sale #</th>
+            <th class="px-5 py-3">Date</th>
+            <th class="px-5 py-3 text-right">Items count</th>
+            <th class="px-5 py-3">Served by</th>
+            <th class="px-5 py-3 text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          @if (loading()) {
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
+                Loading...
+              </td>
+            </tr>
+          } @else {
+            @for (sale of sales(); track sale._id) {
+              <tr
+                class="cursor-pointer transition hover:bg-pink-50"
+                (click)="openReceipt(sale)"
+              >
+                <td class="px-5 py-3 font-semibold text-slate-800">#{{ sale.saleNumber }}</td>
+                <td class="px-5 py-3 text-slate-600">
+                  {{ sale.saleDate | date: 'dd MMM yyyy, HH:mm' }}
+                </td>
+                <td class="px-5 py-3 text-right text-slate-600">{{ sale.items.length | number }}</td>
+                <td class="px-5 py-3 text-slate-600">{{ sale.servedBy?.fullName }}</td>
+                <td class="px-5 py-3 text-right font-semibold text-pink-700">
+                  Ksh {{ sale.totalAmount | number }}
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">
+                  No sales found for the selected period.
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-expand {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .print-full {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  .print-full * {
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,55 @@
+<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-slate-100 to-slate-200 p-4">
+  <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+    <div class="mb-6 text-center">
+      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-pink-600 text-lg font-bold text-white">
+        V
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-800">Victory Cosmetics</h1>
+      <p class="mt-1 text-sm text-slate-500">Sign in to the inventory system</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <form #loginForm="ngForm" (ngSubmit)="submit(loginForm)" class="space-y-4">
+      <div>
+        <label for="username" class="mb-1 block text-sm font-medium text-slate-700">Username</label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          autocomplete="username"
+          [(ngModel)]="username"
+          required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          placeholder="Enter username"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          [(ngModel)]="password"
+          required
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          placeholder="Enter password"
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="submitting() || loginForm.invalid"
+        class="w-full rounded-lg bg-pink-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-300 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {{ submitting() ? 'Signing in...' : 'Sign in' }}
+      </button>
+    </form>
+  </div>
+</div>

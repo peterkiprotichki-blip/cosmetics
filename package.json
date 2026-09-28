@@ -1,0 +1,17 @@
+{
+  "name": "cosmetic-ims",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cosmetic Inventory Management System (Victory Cosmetics)",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "start": "npm --prefix backend start",
+    "seed": "npm --prefix backend run seed"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

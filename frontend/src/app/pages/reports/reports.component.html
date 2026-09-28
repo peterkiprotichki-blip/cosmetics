@@ -1,0 +1,315 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-slate-800">Reports</h1>
+      <p class="mt-1 text-sm text-slate-500">Review inventory, sales and purchasing performance.</p>
+    </div>
+    <button
+      type="button"
+      class="no-print rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+      (click)="printReport()"
+    >
+      Print
+    </button>
+  </div>
+
+  <div class="no-print rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+      <div class="sm:flex-1">
+        <label for="reportType" class="mb-1 block text-sm font-medium text-slate-700">Report type</label>
+        <select
+          id="reportType"
+          name="reportType"
+          [(ngModel)]="selectedReport"
+          (ngModelChange)="onReportChange()"
+          class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+        >
+          @for (option of reportOptions; track option.key) {
+            <option [value]="option.key">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      @if (needsDateRange) {
+        <div class="sm:w-48">
+          <label for="reportFrom" class="mb-1 block text-sm font-medium text-slate-700">From</label>
+          <input
+            id="reportFrom"
+            name="reportFrom"
+            type="date"
+            [(ngModel)]="fromDate"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+        <div class="sm:w-48">
+          <label for="reportTo" class="mb-1 block text-sm font-medium text-slate-700">To</label>
+          <input
+            id="reportTo"
+            name="reportTo"
+            type="date"
+            [(ngModel)]="toDate"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          />
+        </div>
+      }
+
+      <button
+        type="button"
+        class="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
+        (click)="load()"
+      >
+        Load report
+      </button>
+    </div>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div class="border-b border-slate-200 px-5 py-4">
+      <h2 class="text-base font-semibold text-slate-800">
+        {{ reportTitle }}
+      </h2>
+    </div>
+
+    <div class="overflow-x-auto">
+      @if (loading()) {
+        <p class="px-5 py-10 text-center text-sm font-medium text-slate-500">Loading...</p>
+      } @else if (!hasRows) {
+        <p class="px-5 py-10 text-center text-sm text-slate-500">
+          No records found for the selected period.
+        </p>
+      } @else {
+        @switch (selectedReport) {
+          @case ('inventory') {
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Product</th>
+                  <th class="px-5 py-3">Brand</th>
+                  <th class="px-5 py-3">Category</th>
+                  <th class="px-5 py-3 text-right">Stock</th>
+                  <th class="px-5 py-3 text-right">Unit price</th>
+                  <th class="px-5 py-3 text-right">Cost price</th>
+                  <th class="px-5 py-3 text-right">Reorder level</th>
+                  <th class="px-5 py-3">Expiry</th>
+                  <th class="px-5 py-3">Status</th>
+                  <th class="px-5 py-3 text-right">Stock value</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (row of inventoryRows(); track row._id) {
+                  <tr class="transition hover:bg-slate-50">
+                    <td class="px-5 py-3 font-medium text-slate-800">{{ row.productName }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.brand }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.categoryName }}</td>
+                    <td class="px-5 py-3 text-right text-slate-800">{{ row.quantityInStock | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">Ksh {{ row.unitPrice | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">Ksh {{ row.costPrice | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.reorderLevel | number }}</td>
+                    <td class="px-5 py-3 text-slate-600">
+                      {{ row.expiryDate ? (row.expiryDate | date: 'dd MMM yyyy') : '—' }}
+                    </td>
+                    <td class="px-5 py-3">
+                      @if (row.isActive) {
+                        <span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                          Active
+                        </span>
+                      } @else {
+                        <span class="inline-flex rounded-full bg-slate-200 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                          Inactive
+                        </span>
+                      }
+                    </td>
+                    <td class="px-5 py-3 text-right font-semibold text-slate-800">
+                      Ksh {{ row.stockValue | number }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="border-t border-slate-200 bg-slate-50">
+                <tr>
+                  <td colspan="9" class="px-5 py-3 text-right text-sm font-semibold text-slate-700">
+                    Total stock value
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-pink-700">
+                    Ksh {{ totalStockValue | number }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+
+          @case ('sales') {
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Date</th>
+                  <th class="px-5 py-3 text-right">Sales count</th>
+                  <th class="px-5 py-3 text-right">Items sold</th>
+                  <th class="px-5 py-3 text-right">Total sales</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (row of salesRows(); track row.date) {
+                  <tr class="transition hover:bg-slate-50">
+                    <td class="px-5 py-3 font-medium text-slate-800">{{ row.date | date: 'dd MMM yyyy' }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.salesCount | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.itemsSold | number }}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-slate-800">
+                      Ksh {{ row.totalSales | number }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="border-t border-slate-200 bg-slate-50">
+                <tr>
+                  <td class="px-5 py-3 text-sm font-semibold text-slate-700">Total</td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-slate-800">
+                    {{ salesTotals.salesCount | number }}
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-slate-800">
+                    {{ salesTotals.itemsSold | number }}
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-pink-700">
+                    Ksh {{ salesTotals.totalSales | number }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+
+          @case ('purchases') {
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Date</th>
+                  <th class="px-5 py-3 text-right">Purchases count</th>
+                  <th class="px-5 py-3 text-right">Items bought</th>
+                  <th class="px-5 py-3 text-right">Total cost</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (row of purchaseRows(); track row.date) {
+                  <tr class="transition hover:bg-slate-50">
+                    <td class="px-5 py-3 font-medium text-slate-800">{{ row.date | date: 'dd MMM yyyy' }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.purchasesCount | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.itemsBought | number }}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-slate-800">
+                      Ksh {{ row.totalCost | number }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="border-t border-slate-200 bg-slate-50">
+                <tr>
+                  <td class="px-5 py-3 text-sm font-semibold text-slate-700">Total</td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-slate-800">
+                    {{ purchaseTotals.purchasesCount | number }}
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-slate-800">
+                    {{ purchaseTotals.itemsBought | number }}
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-pink-700">
+                    Ksh {{ purchaseTotals.totalCost | number }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+
+          @case ('low-stock') {
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Product</th>
+                  <th class="px-5 py-3">Brand</th>
+                  <th class="px-5 py-3">Category</th>
+                  <th class="px-5 py-3 text-right">Stock</th>
+                  <th class="px-5 py-3 text-right">Reorder level</th>
+                  <th class="px-5 py-3 text-right">Unit price</th>
+                  <th class="px-5 py-3 text-right">Stock value</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (row of inventoryRows(); track row._id) {
+                  <tr class="transition hover:bg-slate-50">
+                    <td class="px-5 py-3 font-medium text-slate-800">{{ row.productName }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.brand }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.categoryName }}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-amber-600">
+                      {{ row.quantityInStock | number }}
+                    </td>
+                    <td class="px-5 py-3 text-right text-slate-600">{{ row.reorderLevel | number }}</td>
+                    <td class="px-5 py-3 text-right text-slate-600">Ksh {{ row.unitPrice | number }}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-slate-800">
+                      Ksh {{ row.stockValue | number }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="border-t border-slate-200 bg-slate-50">
+                <tr>
+                  <td colspan="3" class="px-5 py-3 text-right text-sm font-semibold text-slate-700">
+                    Total units in stock
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-amber-600">
+                    {{ totalUnits | number }}
+                  </td>
+                  <td colspan="3" class="px-5 py-3"></td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+
+          @case ('expiring') {
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-5 py-3">Product</th>
+                  <th class="px-5 py-3">Brand</th>
+                  <th class="px-5 py-3">Category</th>
+                  <th class="px-5 py-3 text-right">Stock</th>
+                  <th class="px-5 py-3">Expiry date</th>
+                  <th class="px-5 py-3 text-right">Unit price</th>
+                  <th class="px-5 py-3 text-right">Stock value</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (row of inventoryRows(); track row._id) {
+                  <tr class="transition hover:bg-slate-50">
+                    <td class="px-5 py-3 font-medium text-slate-800">{{ row.productName }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.brand }}</td>
+                    <td class="px-5 py-3 text-slate-600">{{ row.categoryName }}</td>
+                    <td class="px-5 py-3 text-right text-slate-800">{{ row.quantityInStock | number }}</td>
+                    <td class="px-5 py-3 text-rose-600">
+                      {{ row.expiryDate ? (row.expiryDate | date: 'dd MMM yyyy') : '—' }}
+                    </td>
+                    <td class="px-5 py-3 text-right text-slate-600">Ksh {{ row.unitPrice | number }}</td>
+                    <td class="px-5 py-3 text-right font-semibold text-slate-800">
+                      Ksh {{ row.stockValue | number }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot class="border-t border-slate-200 bg-slate-50">
+                <tr>
+                  <td colspan="6" class="px-5 py-3 text-right text-sm font-semibold text-slate-700">
+                    Total value at risk
+                  </td>
+                  <td class="px-5 py-3 text-right text-sm font-bold text-pink-700">
+                    Ksh {{ totalStockValue | number }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          }
+        }
+      }
+    </div>
+  </div>
+</div>
