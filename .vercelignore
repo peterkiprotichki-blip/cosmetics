@@ -1,0 +1,27 @@
+# Database and runtime
+backend/data
+backend/data/**
+data
+data/**
+*.lock
+mongod.lock
+WiredTiger.lock
+*.log
+backend/server.err.log
+backend/server.log
+backend/server.pid
+
+# Dependencies
+node_modules
+**/node_modules
+backend/node_modules
+frontend/node_modules
+
+# Build caches & outputs
+frontend/.angular
+.angular
+backend/dist
+backend/dist/**
+
+# Git
+.git
