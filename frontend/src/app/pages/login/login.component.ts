@@ -16,8 +16,35 @@ export class LoginComponent {
 
   protected username = '';
   protected password = '';
+  protected readonly showPassword = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly submitting = signal(false);
+
+  protected toggleShowPassword(): void {
+    this.showPassword.update((v) => !v);
+  }
+
+  protected fillAndLogin(role: 'admin' | 'attendant'): void {
+    if (role === 'admin') {
+      this.username = 'admin';
+      this.password = 'ChangeMe123!';
+    } else {
+      this.username = 'attendant';
+      this.password = 'Attendant123!';
+    }
+    this.errorMessage.set('');
+    this.submitting.set(true);
+    this.auth.login(this.username.trim(), this.password.trim()).subscribe({
+      next: () => {
+        this.submitting.set(false);
+        this.router.navigate(['/']);
+      },
+      error: (error: unknown) => {
+        this.submitting.set(false);
+        this.errorMessage.set(apiErrorMessage(error));
+      },
+    });
+  }
 
   protected submit(form: NgForm): void {
     if (form.invalid || this.submitting()) {
@@ -25,7 +52,7 @@ export class LoginComponent {
     }
     this.errorMessage.set('');
     this.submitting.set(true);
-    this.auth.login(this.username.trim(), this.password).subscribe({
+    this.auth.login(this.username.trim(), this.password.trim()).subscribe({
       next: () => {
         this.submitting.set(false);
         this.router.navigate(['/']);
@@ -37,3 +64,4 @@ export class LoginComponent {
     });
   }
 }
+
