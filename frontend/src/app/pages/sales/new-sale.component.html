@@ -1,29 +1,34 @@
 <div class="space-y-6">
-  <div>
-    <h1 class="text-2xl font-bold tracking-tight text-slate-800">New sale</h1>
-    <p class="mt-1 text-sm text-slate-500">Pick products, set quantities and complete the sale.</p>
-  </div>
+  <app-page-header
+    title="New sale"
+    subtitle="Pick products, set quantities and complete the sale."
+    icon="shopping-cart"
+  />
 
-  @if (errorMessage()) {
-    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-      {{ errorMessage() }}
+  <app-alert [message]="errorMessage()" />
+
+  <div class="card p-5">
+    <div class="mb-4 flex items-center gap-2.5">
+      <span class="text-pink-600">
+        <app-icon name="plus" [size]="18" />
+      </span>
+      <h2 class="text-base font-semibold text-slate-800">Add products</h2>
     </div>
-  }
-
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <h2 class="mb-4 text-base font-semibold text-slate-800">Add products</h2>
 
     @if (loading()) {
-      <p class="text-sm font-medium text-slate-500">Loading...</p>
+      <div class="flex items-center gap-3">
+        <span class="h-5 w-5 animate-spin rounded-full border-2 border-pink-600 border-t-transparent"></span>
+        <p class="text-sm font-medium text-slate-500">Loading...</p>
+      </div>
     } @else {
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-12">
         <div class="sm:col-span-7">
-          <label for="product" class="mb-1 block text-sm font-medium text-slate-700">Product</label>
+          <label for="product" class="field-label">Product</label>
           <select
             id="product"
             name="product"
             [(ngModel)]="selectedProductId"
-            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input w-full"
           >
             <option value="">Select a product</option>
             @for (product of activeProducts(); track product._id) {
@@ -35,23 +40,20 @@
         </div>
 
         <div class="sm:col-span-3">
-          <label for="quantity" class="mb-1 block text-sm font-medium text-slate-700">Quantity</label>
+          <label for="quantity" class="field-label">Quantity</label>
           <input
             id="quantity"
             name="quantity"
             type="number"
             min="1"
             [(ngModel)]="selectedQuantity"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input w-full"
           />
         </div>
 
         <div class="flex items-end sm:col-span-2">
-          <button
-            type="button"
-            class="w-full rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
-            (click)="addLine()"
-          >
+          <button type="button" class="btn btn-primary btn-md w-full" (click)="addLine()">
+            <app-icon name="plus" [size]="16" />
             Add
           </button>
         </div>
@@ -59,74 +61,106 @@
     }
   </div>
 
-  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-    <div class="border-b border-slate-200 px-5 py-4">
+  <div class="card overflow-hidden">
+    <div class="flex items-center gap-2.5 border-b border-slate-200 px-5 py-4">
+      <span class="text-pink-600">
+        <app-icon name="shopping-cart" [size]="18" />
+      </span>
       <h2 class="text-base font-semibold text-slate-800">Cart</h2>
+      @if (lines().length > 0) {
+        <span class="badge badge-pink">{{ lines().length }}</span>
+      }
     </div>
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
-        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <thead class="table-head">
           <tr>
-            <th class="px-5 py-3">Product</th>
-            <th class="px-5 py-3 text-right">Unit price</th>
-            <th class="px-5 py-3 text-right">Quantity</th>
-            <th class="px-5 py-3 text-right">Line total</th>
-            <th class="px-5 py-3 text-right">Remove</th>
+            <th class="table-th">Product</th>
+            <th class="table-th text-right">Unit price</th>
+            <th class="table-th text-right">Quantity</th>
+            <th class="table-th text-right">Line total</th>
+            <th class="table-th text-right">Remove</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
           @for (line of lines(); track line.productId) {
-            <tr class="transition hover:bg-slate-50">
-              <td class="px-5 py-3 font-medium text-slate-800">
+            <tr class="table-row">
+              <td class="table-td font-medium text-slate-800">
                 {{ line.productName }}
-                <span class="ml-1 text-xs font-normal text-slate-500">{{ line.brand }}</span>
+                <span class="ml-1 text-xs font-normal text-slate-500">
+                  {{ line.brand }}
+                </span>
               </td>
-              <td class="px-5 py-3 text-right text-slate-600">Ksh {{ line.unitPrice | number }}</td>
-              <td class="px-5 py-3 text-right text-slate-600">{{ line.quantity | number }}</td>
-              <td class="px-5 py-3 text-right font-semibold text-slate-800">
+              <td class="table-td text-right text-slate-600">
+                Ksh {{ line.unitPrice | number }}
+              </td>
+              <td class="table-td text-right text-slate-600">
+                {{ line.quantity | number }}
+              </td>
+              <td class="table-td text-right font-semibold text-slate-800">
                 Ksh {{ line.unitPrice * line.quantity | number }}
               </td>
-              <td class="px-5 py-3 text-right">
+              <td class="table-td text-right">
                 <button
                   type="button"
-                  class="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                  class="btn btn-danger btn-xs"
                   (click)="removeLine(line.productId)"
+                  aria-label="Remove line"
                 >
+                  <app-icon name="trash" [size]="14" />
                   Remove
                 </button>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="px-5 py-8 text-center text-sm text-slate-500">
-                No products added yet.
+              <td colspan="5">
+                <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+                  <span class="text-slate-300">
+                    <app-icon name="shopping-cart" [size]="32" />
+                  </span>
+                  <p class="text-sm font-medium text-slate-500">
+                    No products added yet.
+                  </p>
+                  <p class="text-xs text-slate-400">
+                    Select a product above and press Add to start a sale.
+                  </p>
+                </div>
               </td>
             </tr>
           }
         </tbody>
         <tfoot class="border-t border-slate-200 bg-slate-50">
           <tr>
-            <td colspan="3" class="px-5 py-3 text-right text-sm font-semibold text-slate-700">
+            <td colspan="3" class="table-td text-right text-sm font-semibold text-slate-700">
               Grand total
             </td>
-            <td class="px-5 py-3 text-right text-base font-bold text-pink-700">
+            <td class="table-td text-right text-base font-bold text-pink-700">
               Ksh {{ total() | number }}
             </td>
-            <td class="px-5 py-3"></td>
+            <td class="table-td"></td>
           </tr>
         </tfoot>
       </table>
     </div>
 
-    <div class="border-t border-slate-200 px-5 py-4">
+    <div class="flex items-center justify-between gap-4 border-t border-slate-200 px-5 py-4">
+      <p class="text-sm text-slate-500">
+        {{ lines().length }} item{{ lines().length === 1 ? '' : 's' }} in cart
+      </p>
       <button
         type="button"
         [disabled]="submitting()"
-        class="w-full rounded-lg bg-pink-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-6"
+        class="btn btn-primary btn-md"
         (click)="completeSale()"
       >
-        {{ submitting() ? 'Completing sale...' : 'Complete Sale' }}
+        <app-icon name="check-circle" [size]="16" />
+        @if (submitting()) {
+          Completing sale...
+        } @else {
+          Complete Sale
+        }
       </button>
     </div>
   </div>

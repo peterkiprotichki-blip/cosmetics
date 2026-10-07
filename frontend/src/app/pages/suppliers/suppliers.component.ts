@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../core/api-error';
 import { Supplier } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 interface SupplierFormState {
   _id: string | null;
@@ -18,7 +21,7 @@ function emptyForm(): SupplierFormState {
 
 @Component({
   selector: 'app-suppliers',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertComponent, IconComponent, PageHeaderComponent],
   templateUrl: './suppliers.component.html',
   styleUrl: './suppliers.component.css',
 })

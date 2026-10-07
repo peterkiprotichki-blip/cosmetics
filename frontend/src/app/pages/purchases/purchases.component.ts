@@ -4,6 +4,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../core/api-error';
 import { Product, Purchase, Supplier } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 interface PurchaseItemForm {
   productId: string;
@@ -28,7 +31,14 @@ function monthStart(): string {
 
 @Component({
   selector: 'app-purchases',
-  imports: [FormsModule, DatePipe, DecimalPipe],
+  imports: [
+    FormsModule,
+    DatePipe,
+    DecimalPipe,
+    AlertComponent,
+    IconComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './purchases.component.html',
   styleUrl: './purchases.component.css',
 })

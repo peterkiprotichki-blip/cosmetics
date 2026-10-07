@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../core/api-error';
 import { AppUser } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 interface UserFormState {
   _id: string | null;
@@ -26,7 +29,7 @@ function emptyForm(): UserFormState {
 
 @Component({
   selector: 'app-users',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertComponent, IconComponent, PageHeaderComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css',
 })

@@ -1,35 +1,36 @@
 <div class="space-y-6">
-  <div>
-    <h1 class="text-2xl font-bold tracking-tight text-slate-800">Purchases</h1>
-    <p class="mt-1 text-sm text-slate-500">Record stock bought from suppliers and review past purchases.</p>
-  </div>
+  <app-page-header
+    title="Purchases"
+    subtitle="Record stock bought from suppliers and review past purchases."
+    icon="truck"
+  />
 
-  @if (errorMessage()) {
-    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-      {{ errorMessage() }}
+  <app-alert [message]="errorMessage()" />
+
+  <div class="card p-5">
+    <div class="mb-4 flex items-center gap-2.5">
+      <span class="text-pink-600">
+        <app-icon name="plus" [size]="18" />
+      </span>
+      <h2 class="text-base font-semibold text-slate-800">Record purchase</h2>
     </div>
-  }
-
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <h2 class="mb-4 text-base font-semibold text-slate-800">Record purchase</h2>
 
     @if (loadingForm()) {
-      <p class="text-sm font-medium text-slate-500">Loading...</p>
+      <div class="flex items-center gap-3">
+        <span class="h-5 w-5 animate-spin rounded-full border-2 border-pink-600 border-t-transparent"></span>
+        <p class="text-sm font-medium text-slate-500">Loading...</p>
+      </div>
     } @else {
-      @if (formError()) {
-        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {{ formError() }}
-        </div>
-      }
+      <app-alert [message]="formError()" />
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="supplier" class="mb-1 block text-sm font-medium text-slate-700">Supplier</label>
+          <label for="supplier" class="field-label">Supplier</label>
           <select
             id="supplier"
             name="supplier"
             [(ngModel)]="supplierId"
-            class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input w-full"
           >
             <option value="">Select supplier</option>
             @for (supplier of suppliers(); track supplier._id) {
@@ -39,13 +40,13 @@
         </div>
 
         <div>
-          <label for="purchaseDate" class="mb-1 block text-sm font-medium text-slate-700">Purchase date</label>
+          <label for="purchaseDate" class="field-label">Purchase date</label>
           <input
             id="purchaseDate"
             name="purchaseDate"
             type="date"
             [(ngModel)]="purchaseDate"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input w-full"
           />
         </div>
       </div>
@@ -53,11 +54,8 @@
       <div class="mt-5 space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-semibold text-slate-700">Items</h3>
-          <button
-            type="button"
-            class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
-            (click)="addItemRow()"
-          >
+          <button type="button" class="btn btn-outline btn-sm" (click)="addItemRow()">
+            <app-icon name="plus" [size]="14" />
             Add item
           </button>
         </div>
@@ -72,7 +70,7 @@
                 [id]="'itemProduct' + $index"
                 [name]="'itemProduct' + $index"
                 [(ngModel)]="item.productId"
-                class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                class="input w-full"
               >
                 <option value="">Select product</option>
                 @for (product of activeProductList; track product._id) {
@@ -91,7 +89,7 @@
                 type="number"
                 min="1"
                 [(ngModel)]="item.quantity"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                class="input w-full"
               />
             </div>
 
@@ -106,16 +104,18 @@
                 min="0"
                 step="any"
                 [(ngModel)]="item.unitCost"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                class="input w-full"
               />
             </div>
 
             <div class="flex items-end sm:col-span-2">
               <button
                 type="button"
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                class="btn btn-danger btn-md w-full"
                 (click)="removeItemRow($index)"
+                aria-label="Remove item"
               >
+                <app-icon name="trash" [size]="14" />
                 Remove
               </button>
             </div>
@@ -131,84 +131,111 @@
         <button
           type="button"
           [disabled]="saving()"
-          class="rounded-lg bg-pink-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-60"
+          class="btn btn-primary btn-md"
           (click)="recordPurchase()"
         >
-          {{ saving() ? 'Saving...' : 'Record purchase' }}
+          <app-icon name="check-circle" [size]="16" />
+          @if (saving()) {
+            Saving...
+          } @else {
+            Record purchase
+          }
         </button>
       </div>
     }
   </div>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <h2 class="text-base font-semibold text-slate-800">Purchase history</h2>
+  <div class="card">
+    <div class="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-end sm:justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="text-pink-600">
+          <app-icon name="truck" [size]="18" />
+        </span>
+        <h2 class="text-base font-semibold text-slate-800">Purchase history</h2>
+      </div>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div>
-          <label for="purchaseFrom" class="mb-1 block text-xs font-medium text-slate-600">From</label>
+          <label for="purchaseFrom" class="mb-1 block text-xs font-medium text-slate-600">
+            From
+          </label>
           <input
             id="purchaseFrom"
             name="purchaseFrom"
             type="date"
             [(ngModel)]="fromDate"
-            class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input"
           />
         </div>
         <div>
-          <label for="purchaseTo" class="mb-1 block text-xs font-medium text-slate-600">To</label>
+          <label for="purchaseTo" class="mb-1 block text-xs font-medium text-slate-600">
+            To
+          </label>
           <input
             id="purchaseTo"
             name="purchaseTo"
             type="date"
             [(ngModel)]="toDate"
-            class="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+            class="input"
           />
         </div>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-          (click)="loadPurchases()"
-        >
+        <button type="button" class="btn btn-outline btn-md" (click)="loadPurchases()">
+          <app-icon name="search" [size]="16" />
           Filter
         </button>
       </div>
     </div>
 
-    <div class="mt-4 overflow-x-auto">
+    <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
-        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <thead class="table-head">
           <tr>
-            <th class="px-5 py-3">Purchase #</th>
-            <th class="px-5 py-3">Date</th>
-            <th class="px-5 py-3">Supplier</th>
-            <th class="px-5 py-3 text-right">Items</th>
-            <th class="px-5 py-3 text-right">Total cost</th>
+            <th class="table-th">Purchase #</th>
+            <th class="table-th">Date</th>
+            <th class="table-th">Supplier</th>
+            <th class="table-th text-right">Items</th>
+            <th class="table-th text-right">Total cost</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
           @if (loading()) {
             <tr>
-              <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
-                Loading...
+              <td colspan="5">
+                <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+                  <span class="h-5 w-5 animate-spin rounded-full border-2 border-pink-600 border-t-transparent"></span>
+                  <p class="text-sm font-medium text-slate-500">Loading...</p>
+                </div>
               </td>
             </tr>
           } @else {
             @for (purchase of purchases(); track purchase._id) {
-              <tr class="transition hover:bg-slate-50">
-                <td class="px-5 py-3 font-semibold text-slate-800">#{{ purchase.purchaseNumber }}</td>
-                <td class="px-5 py-3 text-slate-600">
+              <tr class="table-row">
+                <td class="table-td font-semibold text-slate-800">
+                  #{{ purchase.purchaseNumber }}
+                </td>
+                <td class="table-td text-slate-600">
                   {{ purchase.purchaseDate | date: 'dd MMM yyyy' }}
                 </td>
-                <td class="px-5 py-3 text-slate-600">{{ purchase.supplier?.supplierName }}</td>
-                <td class="px-5 py-3 text-right text-slate-600">{{ purchase.items.length | number }}</td>
-                <td class="px-5 py-3 text-right font-semibold text-pink-700">
+                <td class="table-td text-slate-600">
+                  {{ purchase.supplier?.supplierName }}
+                </td>
+                <td class="table-td text-right text-slate-600">
+                  {{ purchase.items.length | number }}
+                </td>
+                <td class="table-td text-right font-semibold text-pink-700">
                   Ksh {{ purchase.totalCost | number }}
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">
-                  No purchases found for the selected period.
+                <td colspan="5">
+                  <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+                    <span class="text-slate-300">
+                      <app-icon name="truck" [size]="32" />
+                    </span>
+                    <p class="text-sm font-medium text-slate-500">
+                      No purchases found for the selected period.
+                    </p>
+                  </div>
                 </td>
               </tr>
             }

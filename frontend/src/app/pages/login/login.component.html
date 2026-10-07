@@ -1,22 +1,18 @@
 <div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-slate-100 to-slate-200 p-4">
-  <div class="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
-    <div class="mb-6 text-center">
-      <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-pink-600 text-lg font-bold text-white">
-        V
-      </div>
-      <h1 class="text-2xl font-bold tracking-tight text-slate-800">Victory Cosmetics</h1>
+  <div class="card w-full max-w-md p-8 shadow-xl">
+    <div class="mb-6 flex flex-col items-center text-center">
+      <app-brand-mark [size]="56" />
+      <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-800">
+        Victory Cosmetics
+      </h1>
       <p class="mt-1 text-sm text-slate-500">Sign in to the inventory system</p>
     </div>
 
-    @if (errorMessage()) {
-      <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-        {{ errorMessage() }}
-      </div>
-    }
+    <app-alert [message]="errorMessage()" />
 
     <form #loginForm="ngForm" (ngSubmit)="submit(loginForm)" class="space-y-4">
       <div>
-        <label for="username" class="mb-1 block text-sm font-medium text-slate-700">Username</label>
+        <label for="username" class="field-label">Username</label>
         <input
           id="username"
           name="username"
@@ -24,70 +20,36 @@
           autocomplete="username"
           [(ngModel)]="username"
           required
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
-          placeholder="Enter username (e.g. admin)"
+          class="input w-full"
+          placeholder="Enter username"
         />
       </div>
 
       <div>
-        <label for="password" class="mb-1 block text-sm font-medium text-slate-700">Password</label>
-        <div class="relative">
-          <input
-            id="password"
-            name="password"
-            [type]="showPassword() ? 'text' : 'password'"
-            autocomplete="current-password"
-            [(ngModel)]="password"
-            required
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 pr-10 text-sm text-slate-800 placeholder-slate-400 focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
-            placeholder="Enter password (e.g. ChangeMe123!)"
-          />
-          <button
-            type="button"
-            (click)="toggleShowPassword()"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-400 hover:text-slate-600 focus:outline-none"
-            tabindex="-1"
-          >
-            {{ showPassword() ? 'Hide' : 'Show' }}
-          </button>
-        </div>
+        <label for="password" class="field-label">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          [(ngModel)]="password"
+          required
+          class="input w-full"
+          placeholder="Enter password"
+        />
       </div>
 
       <button
         type="submit"
         [disabled]="submitting() || loginForm.invalid"
-        class="w-full rounded-lg bg-pink-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-300 disabled:cursor-not-allowed disabled:opacity-60"
+        class="btn btn-primary btn-md w-full"
       >
-        {{ submitting() ? 'Signing in...' : 'Sign in' }}
+        @if (submitting()) {
+          Signing in...
+        } @else {
+          Sign in
+        }
       </button>
-
-      <div class="relative my-4 flex items-center justify-center">
-        <div class="w-full border-t border-slate-200"></div>
-        <span class="absolute bg-white px-2 text-xs font-medium text-slate-400">OR 1-CLICK DEMO LOGIN</span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          (click)="fillAndLogin('admin')"
-          [disabled]="submitting()"
-          class="flex flex-col items-center rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-center transition hover:border-pink-300 hover:bg-pink-50/50 focus:outline-none"
-        >
-          <span class="text-xs font-semibold text-slate-800">Admin (Owner)</span>
-          <span class="text-[10px] text-slate-400">admin / ChangeMe123!</span>
-        </button>
-
-        <button
-          type="button"
-          (click)="fillAndLogin('attendant')"
-          [disabled]="submitting()"
-          class="flex flex-col items-center rounded-lg border border-slate-200 bg-slate-50 p-2.5 text-center transition hover:border-pink-300 hover:bg-pink-50/50 focus:outline-none"
-        >
-          <span class="text-xs font-semibold text-slate-800">Attendant (Sales)</span>
-          <span class="text-[10px] text-slate-400">attendant / Attendant123!</span>
-        </button>
-      </div>
     </form>
   </div>
 </div>
-

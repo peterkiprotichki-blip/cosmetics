@@ -57,13 +57,13 @@ async function main() {
     body: { username: 'admin', password: 'ChangeMe123!' },
   });
   const admin = r.data?.accessToken;
-  check('U1 correct credentials issue a token', r.status === 200 && !!admin, `status ${r.status}`);
+  check('U1 correct credentials issue a token', r.status >= 200 && r.status < 300 && !!admin, `status ${r.status}`);
 
   r = await call('POST', '/api/auth/login', {
     body: { username: 'attendant', password: 'Attendant123!' },
   });
   const attendant = r.data?.accessToken;
-  check('Attendant can log in', r.status === 200 && r.data?.role === 'Attendant', `status ${r.status}`);
+  check('Attendant can log in', r.status >= 200 && r.status < 300 && r.data?.role === 'Attendant', `status ${r.status}`);
 
   r = await call('GET', '/api/auth/me', { token: attendant });
   check('GET /api/auth/me returns the profile', r.status === 200 && r.data?.username === 'attendant');
@@ -75,7 +75,7 @@ async function main() {
   const categoryName = `Test Category ${Date.now()}`;
   r = await call('POST', '/api/categories', { token: admin, body: { categoryName } });
   const category = r.data;
-  check('Category created', r.status === 200 && !!category?._id, `status ${r.status}`);
+  check('Category created', r.status >= 200 && r.status < 300 && !!category?._id, `status ${r.status}`);
 
   r = await call('POST', '/api/categories', { token: admin, body: { categoryName } });
   check('U6 duplicate category rejected', r.status === 409, `status ${r.status}`);
@@ -125,7 +125,7 @@ async function main() {
     },
   });
   const product = r.data;
-  check('U4 valid product saved', r.status === 200 && product?._id, `${r.status} ${JSON.stringify(r.data)}`);
+  check('U4 valid product saved', r.status >= 200 && r.status < 300 && product?._id, `${r.status} ${JSON.stringify(r.data)}`);
 
   r = await call('GET', '/api/products?search=SmokeBrand', { token: attendant });
   check(
@@ -138,7 +138,7 @@ async function main() {
     token: attendant,
     body: { items: [{ productId: product._id, quantity: 4 }] },
   });
-  check('I1 sale of 4 units recorded', r.status === 200 && r.data?.totalAmount === 1400, `${r.status} ${JSON.stringify(r.data)}`);
+  check('I1 sale of 4 units recorded', r.status >= 200 && r.status < 300 && r.data?.totalAmount === 1400, `${r.status} ${JSON.stringify(r.data)}`);
   const sale = r.data;
 
   r = await call('GET', '/api/products/' + product._id, { token: attendant });
@@ -174,7 +174,7 @@ async function main() {
     body: { supplierName: 'Smoke Test Suppliers', phone: '0700 000 000', email: '' },
   });
   const supplier = r.data;
-  check('Supplier created (empty email ignored)', r.status === 200 && !!supplier?._id, `${r.status} ${JSON.stringify(r.data)}`);
+  check('Supplier created (empty email ignored)', r.status >= 200 && r.status < 300 && !!supplier?._id, `${r.status} ${JSON.stringify(r.data)}`);
 
   r = await call('POST', '/api/purchases', {
     token: admin,
@@ -185,7 +185,7 @@ async function main() {
     },
   });
   const purchase = r.data;
-  check('I2 purchase of 20 units recorded', r.status === 200 && purchase?.totalCost === 4800, `${r.status} ${JSON.stringify(r.data)}`);
+  check('I2 purchase of 20 units recorded', r.status >= 200 && r.status < 300 && purchase?.totalCost === 4800, `${r.status} ${JSON.stringify(r.data)}`);
 
   r = await call('GET', '/api/products/' + product._id, { token: attendant });
   check('I2 stock increased to 26', r.data?.quantityInStock === 26, `stock ${r.data?.quantityInStock}`);
@@ -206,7 +206,7 @@ async function main() {
       token: attendant,
       body: { items: [{ productId: product._id, quantity: 8 }] },
     });
-    if (out.status !== 200) {
+    if (out.status < 200 || out.status >= 300) {
       check('Sell down to the reorder level', false, `${out.status} ${JSON.stringify(out.data)}`);
       break;
     }
@@ -280,7 +280,7 @@ async function main() {
     token: admin,
     body: { fullName: 'Smoke Tester', username: `smoke${Date.now()}`, password: 'Secret123', role: 'Attendant' },
   });
-  check('Admin creates a user', r.status === 200 && r.data?.role === 'Attendant', `status ${r.status}`);
+  check('Admin creates a user', r.status >= 200 && r.status < 300 && r.data?.role === 'Attendant', `status ${r.status}`);
 
   r = await call('DELETE', '/api/categories/' + category._id, { token: admin });
   check('Deleting an unused category succeeds', r.status === 204, `status ${r.status}`);

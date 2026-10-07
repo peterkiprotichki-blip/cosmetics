@@ -4,10 +4,20 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { apiErrorMessage } from '../../core/api-error';
 import { Sale } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { BrandMarkComponent } from '../../shared/brand-mark.component';
+import { IconComponent } from '../../shared/icon.component';
 
 @Component({
   selector: 'app-receipt',
-  imports: [DatePipe, DecimalPipe, RouterLink],
+  imports: [
+    DatePipe,
+    DecimalPipe,
+    RouterLink,
+    AlertComponent,
+    BrandMarkComponent,
+    IconComponent,
+  ],
   templateUrl: './receipt.component.html',
   styleUrl: './receipt.component.css',
 })

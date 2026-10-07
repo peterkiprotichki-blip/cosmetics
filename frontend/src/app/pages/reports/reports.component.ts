@@ -8,6 +8,9 @@ import {
   PurchasesReportRow,
   SalesReportRow,
 } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 type ReportKey =
   | 'inventory'
@@ -29,7 +32,14 @@ function monthStart(): string {
 
 @Component({
   selector: 'app-reports',
-  imports: [FormsModule, DatePipe, DecimalPipe],
+  imports: [
+    FormsModule,
+    DatePipe,
+    DecimalPipe,
+    AlertComponent,
+    IconComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css',
 })

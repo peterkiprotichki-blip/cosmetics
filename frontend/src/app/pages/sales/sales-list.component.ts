@@ -2,13 +2,24 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { apiErrorMessage } from '../../core/api-error';
 import { Sale } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 @Component({
   selector: 'app-sales-list',
-  imports: [FormsModule, DatePipe, DecimalPipe],
+  imports: [
+    FormsModule,
+    DatePipe,
+    DecimalPipe,
+    RouterLink,
+    AlertComponent,
+    IconComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './sales-list.component.html',
   styleUrl: './sales-list.component.css',
 })

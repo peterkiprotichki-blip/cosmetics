@@ -48,27 +48,9 @@ export class CategoriesService {
 
   async remove(id: string) {
     this.assertId(id);
-    const oid = new Types.ObjectId(id);
     const inUse = await this.connection
       .collection('products')
-      .countDocuments({ category: oid });
-    const inUseString = await this.connection
-      .collection('products')
-      .countDocuments({ category: id });
-    const sample = await this.connection.collection('products').findOne({});
-    console.log(
-      'DEBUG remove category',
-      id,
-      'db=',
-      this.connection?.db?.databaseName,
-      'inUseOid=',
-      inUse,
-      'inUseString=',
-      inUseString,
-      'sampleCategory=',
-      JSON.stringify(sample?.category),
-      typeof sample?.category,
-    );
+      .countDocuments({ category: new Types.ObjectId(id) });
     if (inUse > 0) {
       throw new ConflictException(
         'This category is used by products and cannot be deleted.',

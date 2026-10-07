@@ -7,6 +7,9 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { apiErrorMessage } from '../../core/api-error';
 import { AuthService } from '../../core/auth.service';
 import { Category, Product, ProductPayload } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 interface ProductFormState {
   _id: string | null;
@@ -36,7 +39,14 @@ function emptyForm(): ProductFormState {
 
 @Component({
   selector: 'app-products',
-  imports: [FormsModule, DecimalPipe, DatePipe],
+  imports: [
+    FormsModule,
+    DecimalPipe,
+    DatePipe,
+    AlertComponent,
+    IconComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
 })

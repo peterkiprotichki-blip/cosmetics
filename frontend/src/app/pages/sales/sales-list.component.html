@@ -1,95 +1,110 @@
 <div class="space-y-6">
-  <div>
-    <h1 class="text-2xl font-bold tracking-tight text-slate-800">Sales</h1>
-    <p class="mt-1 text-sm text-slate-500">Browse past sales and open receipts.</p>
-  </div>
+  <app-page-header
+    title="Sales"
+    subtitle="Browse past sales and open receipts."
+    icon="receipt"
+  >
+    <a routerLink="/sales/new" class="btn btn-primary btn-md">
+      <app-icon name="plus" [size]="16" />
+      New sale
+    </a>
+  </app-page-header>
 
-  <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="card p-5">
     <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
       <div class="flex-1">
-        <label for="fromDate" class="mb-1 block text-sm font-medium text-slate-700">From</label>
+        <label for="fromDate" class="field-label">From</label>
         <input
           id="fromDate"
           name="fromDate"
           type="date"
           [(ngModel)]="fromDate"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          class="input w-full"
         />
       </div>
       <div class="flex-1">
-        <label for="toDate" class="mb-1 block text-sm font-medium text-slate-700">To</label>
+        <label for="toDate" class="field-label">To</label>
         <input
           id="toDate"
           name="toDate"
           type="date"
           [(ngModel)]="toDate"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-200"
+          class="input w-full"
         />
       </div>
       <div class="flex gap-2">
-        <button
-          type="button"
-          class="rounded-lg bg-pink-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-pink-700"
-          (click)="load()"
-        >
+        <button type="button" class="btn btn-primary btn-md" (click)="load()">
+          <app-icon name="search" [size]="16" />
           Filter
         </button>
-        <button
-          type="button"
-          class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-          (click)="clearFilters()"
-        >
+        <button type="button" class="btn btn-outline btn-md" (click)="clearFilters()">
           Clear
         </button>
       </div>
     </div>
   </div>
 
-  @if (errorMessage()) {
-    <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-      {{ errorMessage() }}
-    </div>
-  }
+  <app-alert [message]="errorMessage()" />
 
-  <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+  <div class="card overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
-        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <thead class="table-head">
           <tr>
-            <th class="px-5 py-3">Sale #</th>
-            <th class="px-5 py-3">Date</th>
-            <th class="px-5 py-3 text-right">Items count</th>
-            <th class="px-5 py-3">Served by</th>
-            <th class="px-5 py-3 text-right">Total</th>
+            <th class="table-th">Sale #</th>
+            <th class="table-th">Date</th>
+            <th class="table-th text-right">Items count</th>
+            <th class="table-th">Served by</th>
+            <th class="table-th text-right">Total</th>
+            <th class="table-th text-right"></th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
           @if (loading()) {
             <tr>
-              <td colspan="5" class="px-5 py-10 text-center text-sm font-medium text-slate-500">
-                Loading...
+              <td colspan="6">
+                <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+                  <span class="h-5 w-5 animate-spin rounded-full border-2 border-pink-600 border-t-transparent"></span>
+                  <p class="text-sm font-medium text-slate-500">Loading...</p>
+                </div>
               </td>
             </tr>
           } @else {
             @for (sale of sales(); track sale._id) {
               <tr
-                class="cursor-pointer transition hover:bg-pink-50"
+                class="table-row cursor-pointer"
                 (click)="openReceipt(sale)"
               >
-                <td class="px-5 py-3 font-semibold text-slate-800">#{{ sale.saleNumber }}</td>
-                <td class="px-5 py-3 text-slate-600">
+                <td class="table-td font-semibold text-slate-800">
+                  #{{ sale.saleNumber }}
+                </td>
+                <td class="table-td text-slate-600">
                   {{ sale.saleDate | date: 'dd MMM yyyy, HH:mm' }}
                 </td>
-                <td class="px-5 py-3 text-right text-slate-600">{{ sale.items.length | number }}</td>
-                <td class="px-5 py-3 text-slate-600">{{ sale.servedBy?.fullName }}</td>
-                <td class="px-5 py-3 text-right font-semibold text-pink-700">
+                <td class="table-td text-right text-slate-600">
+                  {{ sale.items.length | number }}
+                </td>
+                <td class="table-td text-slate-600">
+                  {{ sale.servedBy?.fullName }}
+                </td>
+                <td class="table-td text-right font-semibold text-pink-700">
                   Ksh {{ sale.totalAmount | number }}
+                </td>
+                <td class="table-td text-right text-slate-400">
+                  <app-icon name="chevron-right" [size]="16" />
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">
-                  No sales found for the selected period.
+                <td colspan="6">
+                  <div class="flex flex-col items-center gap-2 px-5 py-12 text-center">
+                    <span class="text-slate-300">
+                      <app-icon name="receipt" [size]="32" />
+                    </span>
+                    <p class="text-sm font-medium text-slate-500">
+                      No sales found for the selected period.
+                    </p>
+                  </div>
                 </td>
               </tr>
             }

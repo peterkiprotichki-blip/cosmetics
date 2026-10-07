@@ -3,10 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { apiErrorMessage } from '../../core/api-error';
 import { Category } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 @Component({
   selector: 'app-categories',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertComponent, IconComponent, PageHeaderComponent],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.css',
 })

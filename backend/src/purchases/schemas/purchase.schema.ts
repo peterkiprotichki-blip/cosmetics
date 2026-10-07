@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type PurchaseDocument = HydratedDocument<Purchase>;
 
 @Schema({ _id: false })
 export class PurchaseItem {
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Product', required: true })
   product: Types.ObjectId;
 
   @Prop({ required: true, min: 1 })
@@ -22,7 +22,7 @@ export class Purchase {
   @Prop({ required: true, index: true })
   purchaseNumber: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'Supplier', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Supplier', required: true })
   supplier: Types.ObjectId;
 
   @Prop({ required: true })
@@ -34,7 +34,7 @@ export class Purchase {
   @Prop({ required: true, min: 0 })
   totalCost: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   recordedBy: Types.ObjectId;
 }
 

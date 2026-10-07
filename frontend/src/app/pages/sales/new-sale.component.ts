@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { apiErrorMessage } from '../../core/api-error';
 import { Product, Sale } from '../../core/models';
+import { AlertComponent } from '../../shared/alert.component';
+import { IconComponent } from '../../shared/icon.component';
+import { PageHeaderComponent } from '../../shared/page-header.component';
 
 interface CartLine {
   productId: string;
@@ -16,7 +19,13 @@ interface CartLine {
 
 @Component({
   selector: 'app-new-sale',
-  imports: [FormsModule, DecimalPipe],
+  imports: [
+    FormsModule,
+    DecimalPipe,
+    AlertComponent,
+    IconComponent,
+    PageHeaderComponent,
+  ],
   templateUrl: './new-sale.component.html',
   styleUrl: './new-sale.component.css',
 })

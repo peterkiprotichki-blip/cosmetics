@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
 
 export type SaleDocument = HydratedDocument<Sale>;
 
 @Schema({ _id: false })
 export class SaleItem {
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Product', required: true })
   product: Types.ObjectId;
 
   @Prop({ required: true, min: 1 })
@@ -31,7 +31,7 @@ export class Sale {
   @Prop({ required: true, min: 0 })
   totalAmount: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
   servedBy: Types.ObjectId;
 }
 
